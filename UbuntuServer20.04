@@ -1,0 +1,35 @@
+Install Linux
+  Choose HDD configuration
+  Install SSH
+Create SSH key on client computer
+  ``ssh-keygen -t ed25519``
+    select name for key
+    enter passphrase
+  copy .pub to host computer into ~/.ssh folder
+  sudo cat KeyName.pub > authorized_keys
+  sudo nano /etc/ssh/sshd_config
+    PubkeyAuthentication yes
+    PasswordAuthentication no
+    PermitRootLogin prohibit-password
+    PermitEmptyPassword no
+    Port [randomport]
+  sudo systemctl restart sshd
+Configure Firewall
+  sudo ufw default deny incoming
+  sudo ufw default allow outgoing
+  sudo ufw allow [randomport]/tcp comment 'Allow SSH port'
+  sudo ufw deny 22/tcp
+  * allow ports for node operation
+  sudo ufw enable
+  sudo ufw status numbered
+Install Fail2Ban
+  sudo apt-get install fail2ban -y
+  sudo nano /etc/fail2ban/jail.local
+    [sshd]
+    enabled = true
+    port = [randomport]
+    filter = sshd
+    logpath = /var/log/auth.log
+    maxretry = 3
+  sudo systemctl restart fail2ban
+Setup Google Authenticator
